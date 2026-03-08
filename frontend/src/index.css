@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-sans antialiased bg-slate-50 text-slate-800;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-5 py-2.5 rounded-xl font-semibold text-white
+           bg-primary-600 hover:bg-primary-700 active:scale-[0.98] transition-all duration-200
+           shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+           disabled:opacity-60 disabled:pointer-events-none disabled:active:scale-100;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-5 py-2.5 rounded-xl font-medium
+           border-2 border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300
+           active:scale-[0.98] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-slate-600
+           hover:bg-slate-100 hover:text-slate-900 transition-colors;
+  }
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-white
+           placeholder:text-slate-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20
+           transition-all duration-200 outline-none;
+  }
+  .card {
+    @apply bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden;
+  }
+  .card-hover {
+    @apply card hover:shadow-card-hover hover:border-primary-200 transition-all duration-300;
+  }
+  .section-title {
+    @apply text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight;
+  }
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+  }
+  .badge-success { @apply badge bg-emerald-100 text-emerald-800; }
+  .badge-warning { @apply badge bg-amber-100 text-amber-800; }
+  .badge-neutral { @apply badge bg-slate-100 text-slate-700; }
+}
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
+/* Custom scrollbar (optional) */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { @apply bg-slate-100 rounded-full; }
+::-webkit-scrollbar-thumb { @apply bg-slate-300 rounded-full hover:bg-slate-400; }
