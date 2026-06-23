@@ -1,9 +1,0 @@
-{
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "cd frontend && npm install && npm run build",
-    "dev": "cd backend && npm run dev",
-    "start": "cd backend && npm start"
-  }
-}

@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-sans antialiased bg-slate-50 text-slate-800;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-5 py-2.5 rounded-xl font-semibold text-white
+           bg-primary-600 hover:bg-primary-700 active:scale-[0.98] transition-all duration-200
+           shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+           disabled:opacity-60 disabled:pointer-events-none disabled:active:scale-100;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-5 py-2.5 rounded-xl font-medium
+           border-2 border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300
+           active:scale-[0.98] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-slate-600
+           hover:bg-slate-100 hover:text-slate-900 transition-colors;
+  }
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-white
+           placeholder:text-slate-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20
+           transition-all duration-200 outline-none;
+  }
+  .input-icon {
+    @apply relative;
+  }
+  .input-icon .icon {
+    @apply absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none;
+  }
+  .input-icon .input-field {
+    @apply pl-11;
+  }
+  .card {
+    @apply bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden;
+  }
+  .card-hover {
+    @apply card hover:shadow-card-hover hover:border-primary-200 transition-all duration-300;
+  }
+  .section-title {
+    @apply text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight;
+  }
+  .section-subtitle {
+    @apply text-slate-500 text-center max-w-xl mx-auto mt-3 text-base sm:text-lg;
+  }
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+  }
+  .badge-success { @apply badge bg-emerald-100 text-emerald-800; }
+  .badge-warning { @apply badge bg-amber-100 text-amber-800; }
+  .badge-neutral { @apply badge bg-slate-100 text-slate-700; }
+  .glass {
+    @apply bg-white/80 backdrop-blur-xl border border-white/20 shadow-lg;
+  }
+  .glass-card {
+    @apply glass rounded-2xl;
+  }
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-600 via-primary-500 to-teal-400 bg-clip-text text-transparent;
+  }
+  .text-gradient-hero {
+    @apply bg-gradient-to-r from-white via-teal-100 to-primary-200 bg-clip-text text-transparent;
+  }
+  .skeleton {
+    @apply bg-slate-200 rounded animate-pulse;
+  }
+  .seat-available {
+    @apply w-9 h-9 rounded-lg border-2 border-emerald-400 bg-emerald-50 text-emerald-700
+           hover:bg-emerald-500 hover:text-white hover:border-emerald-500
+           font-semibold text-xs transition-all duration-150 cursor-pointer;
+  }
+  .seat-selected {
+    @apply w-9 h-9 rounded-lg bg-primary-600 text-white border-2 border-primary-600
+           font-semibold text-xs transition-all duration-150;
+  }
+  .seat-booked {
+    @apply w-9 h-9 rounded-lg bg-slate-200 text-slate-400 border-2 border-slate-200
+           font-semibold text-xs cursor-not-allowed;
+  }
+  .seat-locked {
+    @apply w-9 h-9 rounded-lg bg-amber-100 text-amber-700 border-2 border-amber-300
+           font-semibold text-xs cursor-not-allowed;
+  }
+}
+
+html { scroll-behavior: smooth; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { @apply bg-slate-100 rounded-full; }
+::-webkit-scrollbar-thumb { @apply bg-slate-300 rounded-full hover:bg-slate-400; }
+
+@layer utilities {
+  .animation-delay-1000 { animation-delay: 1s; }
+  .animation-delay-2000 { animation-delay: 2s; }
+  .animation-delay-3000 { animation-delay: 3s; }
+  .animation-delay-4000 { animation-delay: 4s; }
+}
