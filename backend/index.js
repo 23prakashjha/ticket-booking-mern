@@ -32,4 +32,10 @@ app.use('/api/payment', paymentRoutes);
 app.get('/api/health', (_, res) => res.json({ ok: true }));
 
 const PORT = process.env.PORT || 50001;
-app.listen(PORT, () => console.log(`Server on http://localhost:${PORT}`));
+
+// Only start the server when NOT on Vercel (serverless)
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => console.log(`Server on http://localhost:${PORT}`));
+}
+
+export default app;
