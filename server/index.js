@@ -16,7 +16,18 @@ import paymentRoutes from './routes/payment.js';
 import hotelRoutes from './routes/hotel.js';
 import placeRoutes from './routes/place.js';
 const app = express();
-app.use(cors({ origin: true, credentials: true }));
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:50001',
+  'https://ticket-booking-mern.onrender.com',
+];
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    cb(null, true);
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 if (!process.env.MONGODB_URI) {
