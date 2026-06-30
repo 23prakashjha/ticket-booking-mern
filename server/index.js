@@ -20,13 +20,22 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 if (!process.env.MONGODB_URI) {
-  console.error('FATAL: MONGODB_URI is not set. Create backend/.env with:');
-  console.error('  MONGODB_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/ticket-booking');
+  console.error('FATAL: MONGODB_URI is not set. Create server/.env with:');
+  console.error('  MONGODB_URI=mongodb://<user>:<pass>@host:port/db?ssl=true&replicaSet=...');
   process.exit(1);
 }
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI, {
+  serverSelectionTimeoutMS: 10000,
+  socketTimeoutMS: 45000,
+})
   .then(() => console.log('MongoDB connected'))
-  .catch((err) => console.error('MongoDB error:', err));
+  .catch((err) => {
+    console.error('MongoDB connection error:', err.message);
+    if (err.code === 'ECONNREFUSED' || err.message?.includes('querySrv')) {
+      console.error('Tip: If you see a DNS/querySrv error, switch to a standard mongodb:// URI');
+      console.error('Get the exact connection string from your Atlas cluster -> Connect -> Drivers');
+    }
+  });
 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
