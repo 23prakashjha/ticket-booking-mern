@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
+  const [role, setRole] = useState('user');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,15 +22,24 @@ export default function Auth() {
     setError('');
     setLoading(true);
     try {
-      if (isLogin) {
+      if (role === 'admin') {
+        const endpoint = isLogin ? '/admin/login' : '/admin/register';
+        const body = isLogin ? { email, password } : { name, email, password };
+        const { data } = await api.post(endpoint, body);
+        localStorage.setItem('adminToken', data.token);
+        localStorage.setItem('adminName', data.admin.name);
+        localStorage.setItem('adminEmail', data.admin.email);
+        navigate('/admin/dashboard');
+      } else if (isLogin) {
         const { data } = await api.post('/auth/login', { email, password });
         login(data.user, data.token);
+        navigate(from, { replace: true });
       } else {
         if (!name.trim()) { setError('Name is required'); setLoading(false); return; }
         const { data } = await api.post('/auth/register', { name, email, password, phone: phone || undefined });
         register(data.user, data.token);
+        navigate(from, { replace: true });
       }
-      navigate(from, { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong');
     } finally {
@@ -49,12 +59,14 @@ export default function Auth() {
             <span className="text-4xl font-extrabold text-white">B</span>
           </div>
           <h2 className="text-4xl font-bold text-white mb-4 leading-tight">
-            {isLogin ? 'Welcome Back to BookTrip' : 'Start Your Journey'}
+            {role === 'admin'
+              ? 'Admin Portal'
+              : isLogin ? 'Welcome Back to BookTrip' : 'Start Your Journey'}
           </h2>
           <p className="text-teal-100 text-lg mb-8 leading-relaxed">
-            {isLogin
-              ? 'Sign in to manage your bookings, select seats, and enjoy exclusive deals.'
-              : 'Create an account to book trains, buses, and flights with ease.'}
+            {role === 'admin'
+              ? (isLogin ? 'Sign in to manage your platform' : 'Register to manage bookings, users & content')
+              : (isLogin ? 'Sign in to manage your bookings, select seats, and enjoy exclusive deals.' : 'Create an account to book trains, buses, and flights with ease.')}
           </p>
           <div className="flex flex-col gap-4 text-left">
             {[
@@ -82,11 +94,31 @@ export default function Auth() {
               </div>
               <span className="text-xl font-bold text-slate-900">BookTrip</span>
             </Link>
+
+            <div className="inline-flex items-center bg-slate-100 rounded-xl p-1 mb-5">
+              <button
+                type="button"
+                onClick={() => { setRole('user'); setError(''); }}
+                className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${role === 'user' ? 'bg-white text-primary-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                👤 User
+              </button>
+              <button
+                type="button"
+                onClick={() => { setRole('admin'); setError(''); }}
+                className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${role === 'admin' ? 'bg-white text-primary-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                🔐 Admin
+              </button>
+            </div>
+
             <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
-              {isLogin ? 'Welcome back' : 'Create account'}
+              {role === 'admin' ? 'Admin' : isLogin ? 'Welcome back' : 'Create account'}
             </h1>
             <p className="text-slate-500 mt-1.5">
-              {isLogin ? 'Sign in to continue to your account' : 'Register to start booking tickets'}
+              {role === 'admin'
+                ? (isLogin ? 'Sign in to admin panel' : 'Register as administrator')
+                : (isLogin ? 'Sign in to continue to your account' : 'Register to start booking tickets')}
             </p>
           </div>
 
@@ -157,7 +189,7 @@ export default function Auth() {
                   </svg>
                   Please wait...
                 </span>
-              ) : isLogin ? 'Sign In' : 'Create Account'}
+              ) : role === 'admin' ? (isLogin ? 'Admin Login' : 'Admin Register') : isLogin ? 'Sign In' : 'Create Account'}
             </button>
           </form>
 
@@ -188,7 +220,7 @@ export default function Auth() {
               onClick={() => { setIsLogin(!isLogin); setError(''); }}
               className="font-semibold text-primary-600 hover:text-primary-700 hover:underline transition-colors"
             >
-              {isLogin ? 'Create one' : 'Sign in'}
+              {isLogin ? (role === 'admin' ? 'Register as Admin' : 'Create one') : 'Sign in'}
             </button>
           </p>
 
