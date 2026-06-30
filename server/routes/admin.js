@@ -50,7 +50,10 @@ router.get('/stats', adminProtect, async (req, res) => {
       Place.countDocuments(),
     ]);
     const revenue = bookings.reduce((s, b) => s + b.totalAmount, 0);
-    res.json({ users, bookings: bookings.length, trains, buses, flights, hotels, places, revenue });
+    res.json({
+      admin: { name: req.admin.name, email: req.admin.email },
+      users, bookings: bookings.length, trains, buses, flights, hotels, places, revenue
+    });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
@@ -60,6 +63,28 @@ router.get('/users', adminProtect, async (req, res) => {
   try {
     const users = await User.find().select('-password').lean();
     res.json(users);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+router.post('/users', adminProtect, async (req, res) => {
+  try {
+    const { name, email, password, phone } = req.body;
+    if (!name || !email || !password) return res.status(400).json({ message: 'Name, email and password required' });
+    const exists = await User.findOne({ email });
+    if (exists) return res.status(400).json({ message: 'Email already registered' });
+    const user = await User.create({ name, email, password, phone });
+    res.status(201).json({ message: 'User created', user: { id: user._id, name: user.name, email: user.email } });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+router.delete('/users/:id', adminProtect, async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: 'User deleted' });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }

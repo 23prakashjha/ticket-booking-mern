@@ -3,6 +3,28 @@ import { useNavigate, useLocation, Routes, Route, Link, NavLink } from 'react-ro
 import adminApi from '../../api/adminAxios';
 import api from '../../api/axios';
 
+const STAT_ICONS = {
+  Revenue: '💰',
+  Users: '👥',
+  Bookings: '🎫',
+  Trains: '🚂',
+  Buses: '🚌',
+  Flights: '✈️',
+  Hotels: '🏨',
+  Places: '📍',
+};
+
+const STAT_COLORS = {
+  Revenue: 'from-emerald-500 to-teal-600',
+  Users: 'from-blue-500 to-indigo-600',
+  Bookings: 'from-violet-500 to-purple-600',
+  Trains: 'from-orange-500 to-red-500',
+  Buses: 'from-cyan-500 to-blue-600',
+  Flights: 'from-rose-500 to-pink-600',
+  Hotels: 'from-amber-500 to-yellow-600',
+  Places: 'from-lime-500 to-green-600',
+};
+
 const SIDEBAR = [
   { path: '', label: 'Revenue & Stats', end: true },
   { path: 'add-train', label: 'Add Train' },
@@ -19,24 +41,64 @@ const SIDEBAR = [
   { path: 'bookings', label: 'Manage Bookings' },
 ];
 
+function Loader() {
+  return (
+    <div className="flex items-center justify-center py-20">
+      <div className="animate-spin w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full" />
+    </div>
+  );
+}
+
+function StatCard({ label, value, icon, color }) {
+  return (
+    <div className="relative group">
+      <div className={`absolute inset-0 bg-gradient-to-br ${color} rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
+      <div className="relative bg-white rounded-2xl border border-stone-200 p-5 hover:shadow-lg hover:border-stone-300 transition-all duration-200">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-2xl">{icon}</span>
+          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full bg-gradient-to-br ${color} text-white`}>
+            {label}
+          </span>
+        </div>
+        <p className="text-3xl font-bold text-stone-800">
+          {typeof value === 'number' && label === 'Revenue' ? `₹${value.toLocaleString()}` : value}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function Stats() {
   const [stats, setStats] = useState(null);
   useEffect(() => {
     adminApi.get('/admin/stats').then(({ data }) => setStats(data)).catch(() => setStats(null));
   }, []);
-  if (!stats) return <div>Loading...</div>;
+  if (!stats) return <Loader />;
+  const items = [
+    { label: 'Revenue', value: stats.revenue, icon: STAT_ICONS.Revenue, color: STAT_COLORS.Revenue },
+    { label: 'Users', value: stats.users, icon: STAT_ICONS.Users, color: STAT_COLORS.Users },
+    { label: 'Bookings', value: stats.bookings, icon: STAT_ICONS.Bookings, color: STAT_COLORS.Bookings },
+    { label: 'Trains', value: stats.trains, icon: STAT_ICONS.Trains, color: STAT_COLORS.Trains },
+    { label: 'Buses', value: stats.buses, icon: STAT_ICONS.Buses, color: STAT_COLORS.Buses },
+    { label: 'Flights', value: stats.flights, icon: STAT_ICONS.Flights, color: STAT_COLORS.Flights },
+    { label: 'Hotels', value: stats.hotels, icon: STAT_ICONS.Hotels, color: STAT_COLORS.Hotels },
+    { label: 'Places', value: stats.places, icon: STAT_ICONS.Places, color: STAT_COLORS.Places },
+  ];
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Revenue & Stats</h2>
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-stone-200"><p className="text-stone-500 text-sm">Revenue</p><p className="text-2xl font-bold text-primary-600">₹{stats.revenue}</p></div>
-        <div className="bg-white p-4 rounded-xl border border-stone-200"><p className="text-stone-500 text-sm">Users</p><p className="text-2xl font-bold">{stats.users}</p></div>
-        <div className="bg-white p-4 rounded-xl border border-stone-200"><p className="text-stone-500 text-sm">Bookings</p><p className="text-2xl font-bold">{stats.bookings}</p></div>
-        <div className="bg-white p-4 rounded-xl border border-stone-200"><p className="text-stone-500 text-sm">Trains</p><p className="text-2xl font-bold">{stats.trains}</p></div>
-        <div className="bg-white p-4 rounded-xl border border-stone-200"><p className="text-stone-500 text-sm">Buses</p><p className="text-2xl font-bold">{stats.buses}</p></div>
-        <div className="bg-white p-4 rounded-xl border border-stone-200"><p className="text-stone-500 text-sm">Flights</p><p className="text-2xl font-bold">{stats.flights}</p></div>
-        <div className="bg-white p-4 rounded-xl border border-stone-200"><p className="text-stone-500 text-sm">Hotels</p><p className="text-2xl font-bold">{stats.hotels}</p></div>
-        <div className="bg-white p-4 rounded-xl border border-stone-200"><p className="text-stone-500 text-sm">Places</p><p className="text-2xl font-bold">{stats.places}</p></div>
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-xl font-bold shadow-md">
+          {stats.admin?.name?.[0]?.toUpperCase() || 'A'}
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-stone-800">Welcome back, {stats.admin?.name || 'Admin'}</h1>
+          <p className="text-stone-500 text-sm">{stats.admin?.email}</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {items.map((item) => (
+          <StatCard key={item.label} {...item} />
+        ))}
       </div>
     </div>
   );
@@ -411,20 +473,28 @@ function ManageList({ title, base, fields }) {
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">{title}</h2>
-      <div className="overflow-x-auto">
-        <table className="w-full border border-stone-200 rounded-lg overflow-hidden">
-          <thead className="bg-stone-100"><tr>{fields.map((f) => <th key={f} className="p-2 text-left">{f}</th>)}<th className="p-2">Action</th></tr></thead>
+      <div className="overflow-x-auto rounded-xl border border-stone-200">
+        <table className="w-full">
+          <thead className="bg-stone-100">
+            <tr>
+              {fields.map((f) => <th key={f} className="p-3 text-left text-sm font-semibold text-stone-600">{f}</th>)}
+              <th className="p-3 text-left text-sm font-semibold text-stone-600">Action</th>
+            </tr>
+          </thead>
           <tbody>
             {list.map((row) => (
-              <tr key={row._id} className="border-t border-stone-200">
+              <tr key={row._id} className="border-t border-stone-200 hover:bg-stone-50 transition-colors">
                 {fields.map((f) => (
-                  <td key={f} className="p-2">{row[f] ?? '-'}</td>
+                  <td key={f} className="p-3 text-sm text-stone-700">{row[f] ?? '-'}</td>
                 ))}
-                <td className="p-2"><button type="button" onClick={() => handleDelete(row._id)} className="text-red-600 text-sm">Delete</button></td>
+                <td className="p-3">
+                  <button type="button" onClick={() => handleDelete(row._id)} className="text-sm text-red-600 hover:text-red-800 hover:underline font-medium">Delete</button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {list.length === 0 && <p className="p-6 text-center text-stone-400 text-sm">No items found</p>}
       </div>
     </div>
   );
@@ -432,21 +502,99 @@ function ManageList({ title, base, fields }) {
 
 function ManageUsers() {
   const [users, setUsers] = useState([]);
-  useEffect(() => {
+  const [showModal, setShowModal] = useState(false);
+  const [form, setForm] = useState({ name: '', email: '', password: '', phone: '' });
+  const [msg, setMsg] = useState('');
+
+  const fetchUsers = () => {
     adminApi.get('/admin/users').then(({ data }) => setUsers(data)).catch(() => setUsers([]));
-  }, []);
+  };
+
+  useEffect(() => { fetchUsers(); }, []);
+
+  const handleDelete = async (id) => {
+    if (!confirm('Delete this user permanently?')) return;
+    try {
+      await adminApi.delete(`/admin/users/${id}`);
+      setUsers((prev) => prev.filter((u) => u._id !== id));
+    } catch (e) {
+      alert(e.response?.data?.message || 'Failed to delete');
+    }
+  };
+
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    setMsg('');
+    try {
+      await adminApi.post('/admin/users', form);
+      setShowModal(false);
+      setForm({ name: '', email: '', password: '', phone: '' });
+      fetchUsers();
+    } catch (err) {
+      setMsg(err.response?.data?.message || 'Failed to create user');
+    }
+  };
+
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Manage Users</h2>
-      <div className="overflow-x-auto">
-        <table className="w-full border border-stone-200 rounded-lg">
-          <thead className="bg-stone-100"><tr><th className="p-2 text-left">Name</th><th className="p-2 text-left">Email</th></tr></thead>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold">Manage Users</h2>
+        <button type="button" onClick={() => setShowModal(true)} className="btn-primary text-sm py-2 px-4">+ Add User</button>
+      </div>
+
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowModal(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-stone-800">Add New User</h3>
+              <button type="button" onClick={() => setShowModal(false)} className="text-stone-400 hover:text-stone-600 text-xl leading-none">&times;</button>
+            </div>
+            <form onSubmit={handleAdd} className="space-y-3">
+              <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Full name" className="input-field" required />
+              <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email address" className="input-field" required />
+              <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="Password" className="input-field" required minLength={6} />
+              <input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Phone (optional)" className="input-field" />
+              {msg && <p className="text-sm text-red-600">{msg}</p>}
+              <div className="flex gap-2 pt-2">
+                <button type="button" onClick={() => setShowModal(false)} className="btn-secondary flex-1">Cancel</button>
+                <button type="submit" className="btn-primary flex-1">Create User</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <div className="overflow-x-auto rounded-xl border border-stone-200">
+        <table className="w-full">
+          <thead className="bg-stone-100">
+            <tr>
+              <th className="p-3 text-left text-sm font-semibold text-stone-600">Name</th>
+              <th className="p-3 text-left text-sm font-semibold text-stone-600">Email</th>
+              <th className="p-3 text-left text-sm font-semibold text-stone-600">Phone</th>
+              <th className="p-3 text-left text-sm font-semibold text-stone-600">Joined</th>
+              <th className="p-3 text-left text-sm font-semibold text-stone-600">Action</th>
+            </tr>
+          </thead>
           <tbody>
             {users.map((u) => (
-              <tr key={u._id} className="border-t border-stone-200"><td className="p-2">{u.name}</td><td className="p-2">{u.email}</td></tr>
+              <tr key={u._id} className="border-t border-stone-200 hover:bg-stone-50 transition-colors">
+                <td className="p-3 text-sm font-medium text-stone-700">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-xs font-bold">{u.name?.[0]?.toUpperCase()}</div>
+                    {u.name}
+                  </div>
+                </td>
+                <td className="p-3 text-sm text-stone-600">{u.email}</td>
+                <td className="p-3 text-sm text-stone-600">{u.phone || '-'}</td>
+                <td className="p-3 text-sm text-stone-500">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '-'}</td>
+                <td className="p-3">
+                  <button type="button" onClick={() => handleDelete(u._id)} className="text-sm text-red-600 hover:text-red-800 hover:underline font-medium">Delete</button>
+                </td>
+              </tr>
             ))}
           </tbody>
         </table>
+        {users.length === 0 && <p className="p-6 text-center text-stone-400 text-sm">No users found</p>}
       </div>
     </div>
   );
@@ -460,23 +608,39 @@ function ManageBookings() {
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Manage Bookings</h2>
-      <div className="overflow-x-auto">
-        <table className="w-full border border-stone-200 rounded-lg text-sm">
+      <div className="overflow-x-auto rounded-xl border border-stone-200">
+        <table className="w-full text-sm">
           <thead className="bg-stone-100">
-            <tr><th className="p-2 text-left">User</th><th className="p-2 text-left">Type</th><th className="p-2 text-left">Seats</th><th className="p-2 text-left">Amount</th><th className="p-2 text-left">Status</th></tr>
+            <tr>
+              <th className="p-3 text-left font-semibold text-stone-600">User</th>
+              <th className="p-3 text-left font-semibold text-stone-600">Type</th>
+              <th className="p-3 text-left font-semibold text-stone-600">Seats</th>
+              <th className="p-3 text-left font-semibold text-stone-600">Amount</th>
+              <th className="p-3 text-left font-semibold text-stone-600">Status</th>
+              <th className="p-3 text-left font-semibold text-stone-600">Date</th>
+            </tr>
           </thead>
           <tbody>
             {bookings.map((b) => (
-              <tr key={b._id} className="border-t border-stone-200">
-                <td className="p-2">{b.user?.name} ({b.user?.email})</td>
-                <td className="p-2">{b.type}</td>
-                <td className="p-2">{b.seats?.join(', ')}</td>
-                <td className="p-2">₹{b.totalAmount}</td>
-                <td className="p-2">{b.status}</td>
+              <tr key={b._id} className="border-t border-stone-200 hover:bg-stone-50 transition-colors">
+                <td className="p-3 text-stone-700">{b.user?.name} <span className="text-stone-400">({b.user?.email})</span></td>
+                <td className="p-3">
+                  <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-primary-50 text-primary-700">{b.type}</span>
+                </td>
+                <td className="p-3 text-stone-600">{b.seats?.join(', ')}</td>
+                <td className="p-3 font-medium text-stone-800">₹{b.totalAmount}</td>
+                <td className="p-3">
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                    b.status === 'paid' ? 'bg-green-50 text-green-700' :
+                    b.status === 'cancelled' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'
+                  }`}>{b.status}</span>
+                </td>
+                <td className="p-3 text-stone-500">{b.createdAt ? new Date(b.createdAt).toLocaleDateString() : '-'}</td>
               </tr>
             ))}
           </tbody>
         </table>
+        {bookings.length === 0 && <p className="p-6 text-center text-stone-400 text-sm">No bookings found</p>}
       </div>
     </div>
   );
@@ -485,6 +649,10 @@ function ManageBookings() {
 export default function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [adminInfo, setAdminInfo] = useState({
+    name: localStorage.getItem('adminName'),
+    email: localStorage.getItem('adminEmail'),
+  });
 
   useEffect(() => {
     const t = localStorage.getItem('adminToken');
@@ -492,33 +660,57 @@ export default function Dashboard() {
       navigate('/admin');
       return;
     }
-    adminApi.get('/admin/stats').catch(() => { localStorage.removeItem('adminToken'); navigate('/admin'); });
+    adminApi.get('/admin/stats')
+      .then(({ data }) => {
+        setAdminInfo(data.admin);
+        localStorage.setItem('adminName', data.admin.name);
+        localStorage.setItem('adminEmail', data.admin.email);
+      })
+      .catch(() => { localStorage.removeItem('adminToken'); navigate('/admin'); });
   }, [navigate]);
 
   const logout = () => {
     localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminName');
+    localStorage.removeItem('adminEmail');
     navigate('/admin');
   };
 
   return (
-    <div className="flex min-h-[80vh]">
-      <aside className="w-56 bg-white border-r border-stone-200 p-4 flex flex-col">
-        <h2 className="font-bold text-primary-600 mb-4">Admin Dashboard</h2>
-        <nav className="flex-1 space-y-1">
+    <div className="flex min-h-[80vh] bg-stone-50">
+      <aside className="w-60 bg-gradient-to-b from-stone-900 to-stone-800 text-white flex flex-col shadow-xl">
+        <div className="p-5 border-b border-stone-700">
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+              {adminInfo?.name?.[0]?.toUpperCase() || 'A'}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-sm truncate">{adminInfo?.name || 'Admin'}</p>
+              <p className="text-xs text-stone-400 truncate">{adminInfo?.email || ''}</p>
+            </div>
+          </div>
+        </div>
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {SIDEBAR.map((item) => (
             <NavLink
               key={item.path || 'stats'}
               to={item.path ? `/admin/dashboard/${item.path}` : '/admin/dashboard'}
               end={item.end}
-              className={({ isActive }) => `block px-3 py-2 rounded-lg ${isActive ? 'bg-primary-600 text-white' : 'hover:bg-stone-100'}`}
+              className={({ isActive }) =>
+                `block px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  isActive
+                    ? 'bg-primary-600 text-white shadow-md'
+                    : 'text-stone-300 hover:bg-stone-700/50 hover:text-white'
+                }`
+              }
             >
               {item.label}
             </NavLink>
           ))}
         </nav>
-        <div className="pt-4 border-t border-stone-200">
-          <Link to="/" className="block py-2 text-sm text-stone-600 hover:text-primary-600">Back to site</Link>
-          <button type="button" onClick={logout} className="btn-secondary w-full mt-2">Logout</button>
+        <div className="p-4 border-t border-stone-700 space-y-2">
+          <Link to="/" className="block py-2 text-sm text-stone-400 hover:text-white transition-colors">← Back to site</Link>
+          <button type="button" onClick={logout} className="w-full py-2.5 px-4 rounded-xl bg-stone-700 hover:bg-red-600 text-stone-300 hover:text-white text-sm font-medium transition-all duration-200">Logout</button>
         </div>
       </aside>
       <div className="flex-1 p-8 overflow-auto">
