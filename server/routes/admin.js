@@ -40,7 +40,7 @@ router.post('/login', async (req, res) => {
 
 router.get('/stats', adminProtect, async (req, res) => {
   try {
-    const [users, bookings, trains, buses, flights] = await Promise.all([
+    const [users, bookings, trains, buses, flights, hotels, places] = await Promise.all([
       User.countDocuments(),
       Booking.find({ status: 'paid' }),
       Train.countDocuments(),
