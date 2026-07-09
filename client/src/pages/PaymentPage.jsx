@@ -3,6 +3,15 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../api/axios';
 import { processPayment } from '../utils/razorpay';
 
+const PAYMENT_METHODS = [
+  { id: 'card', name: 'Credit / Debit Card', icon: '💳', description: 'Visa, Mastercard, Rupay', popular: true },
+  { id: 'upi', name: 'UPI', icon: '📱', description: 'GPay, PhonePe, Paytm', popular: true },
+  { id: 'netbanking', name: 'Net Banking', icon: '🏦', description: 'All major banks' },
+  { id: 'wallet', name: 'Wallet', icon: '👛', description: 'Paytm, PhonePe Wallet' },
+  { id: 'emi', name: 'EMI', icon: '📊', description: 'Easy monthly installments' },
+  { id: 'cod', name: 'Cash on Delivery', icon: '💵', description: 'Pay when you receive' },
+];
+
 export default function PaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
