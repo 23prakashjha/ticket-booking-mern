@@ -92,7 +92,7 @@ export default function HotelDetails() {
 
     setBooking('processing');
     try {
-      const { data } = await axios.post('/booking/lock', {
+      const { data } = await axios.post('/bookings/lock-seats', {
         type: 'hotel',
         id: hotel._id,
         seats: selectedRoomNos,

@@ -35,6 +35,12 @@ if (!process.env.MONGODB_URI) {
   console.error('  MONGODB_URI=mongodb://<user>:<pass>@host:port/db?ssl=true&replicaSet=...');
   process.exit(1);
 }
+if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+  console.error('WARNING: RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET is not set.');
+  console.error('  Payment orders will fail. Set them in server/.env or Render dashboard.');
+} else {
+  console.log('Razorpay keys configured');
+}
 mongoose.connect(process.env.MONGODB_URI, {
   serverSelectionTimeoutMS: 10000,
   socketTimeoutMS: 45000,

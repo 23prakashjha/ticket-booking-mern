@@ -128,14 +128,12 @@ export default function TrainDetails() {
         seats: selected,
         seatClass: selectedClass
       });
-      const orderRes = await api.post('/payment/create-order', { bookingId: data.booking._id });
       const bookingData = {
         bookingId: data.booking._id,
-        amount: orderRes.data.amount / 100,
+        amount: data.totalAmount,
         type: 'train',
         seats: selected,
-        seatClass: selectedClass,
-        sessionId: orderRes.data.sessionId
+        seatClass: selectedClass
       };
       localStorage.setItem('pendingBooking', JSON.stringify(bookingData));
       navigate('/payment', { state: { bookingData } });

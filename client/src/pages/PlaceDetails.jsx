@@ -81,7 +81,7 @@ export default function PlaceDetails() {
 
     setBooking('processing');
     try {
-      const { data } = await axios.post('/booking/lock-seats', {
+      const { data } = await axios.post('/bookings/lock-seats', {
         type: 'place',
         id: place._id,
         visitDate: new Date(visitDate).toISOString(),

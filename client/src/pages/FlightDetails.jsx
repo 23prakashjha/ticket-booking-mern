@@ -89,14 +89,12 @@ export default function FlightDetails() {
     setPayLoading(true);
     try {
       const { data } = await api.post('/bookings/lock-seats', { type: 'flight', id, seats: selected, seatClass });
-      const orderRes = await api.post('/payment/create-order', { bookingId: data.booking._id });
       const bookingData = {
         bookingId: data.booking._id,
-        amount: orderRes.data.amount / 100,
+        amount: data.totalAmount,
         type: 'flight',
         seats: selected,
-        seatClass,
-        sessionId: orderRes.data.sessionId
+        seatClass
       };
       localStorage.setItem('pendingBooking', JSON.stringify(bookingData));
       navigate('/payment', { state: { bookingData } });
