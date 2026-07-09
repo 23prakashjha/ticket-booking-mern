@@ -52,11 +52,9 @@ router.post('/create-order', protect, async (req, res) => {
       key: key_id,
     });
   } catch (error) {
-    console.error('Razorpay order creation error:', error?.message || error);
-    if (error?.response?.data) {
-      console.error('Razorpay API response:', JSON.stringify(error.response.data));
-    }
-    res.status(500).json({ message: error?.message || 'Payment order creation failed' });
+    const msg = error?.error?.description || error?.message || error || 'Payment order creation failed';
+    console.error('Razorpay order creation error:', msg);
+    res.status(500).json({ message: msg });
   }
 });
 
@@ -104,7 +102,7 @@ router.post('/verify', protect, async (req, res) => {
     res.json({ success: true, booking });
   } catch (error) {
     console.error('Payment verification error:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error?.error?.description || error?.message || 'Payment verification failed' });
   }
 });
 
