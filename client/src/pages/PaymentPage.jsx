@@ -89,14 +89,18 @@ export default function PaymentPage() {
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-slate-600">
-              {bookingData.type?.charAt(0).toUpperCase() + bookingData.type?.slice(1)} Ticket
+              {bookingData.type === 'hotel' ? 'Hotel Booking' :
+               bookingData.type === 'place' ? 'Place Entry' :
+               (bookingData.type?.charAt(0).toUpperCase() + bookingData.type?.slice(1)) + ' Ticket'}
             </span>
             <span className="font-medium">₹{bookingData.amount}</span>
           </div>
+          {bookingData.type !== 'place' && (
           <div className="flex justify-between items-center">
-            <span className="text-slate-600">Seats</span>
+            <span className="text-slate-600">{bookingData.type === 'hotel' ? 'Rooms' : 'Seats'}</span>
             <span className="font-medium">{bookingData.seats?.join(', ')}</span>
           </div>
+          )}
           <div className="flex justify-between items-center pt-3 border-t">
             <span className="font-bold text-slate-900">Total Amount</span>
             <span className="text-2xl font-bold text-primary-600">₹{bookingData.amount}</span>

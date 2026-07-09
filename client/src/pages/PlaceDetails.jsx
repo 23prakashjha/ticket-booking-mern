@@ -89,11 +89,17 @@ export default function PlaceDetails() {
         adults,
         children,
       });
-      navigate('/payment', { state: {
+      const bookingData = {
         bookingId: data.booking._id,
         amount: data.totalAmount,
-        description: `${place.name} - ${adults} Adult(s), ${children} Child(ren)`,
-      }});
+        type: 'place',
+        adults,
+        children,
+        visitDate,
+        timeSlot,
+      };
+      localStorage.setItem('pendingBooking', JSON.stringify(bookingData));
+      navigate('/payment', { state: { bookingData } });
     } catch (e) {
       setError(e.response?.data?.message || 'Booking failed');
       setBooking(null);

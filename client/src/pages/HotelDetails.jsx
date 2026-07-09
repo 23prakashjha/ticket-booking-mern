@@ -102,11 +102,15 @@ export default function HotelDetails() {
         checkOut: new Date(checkOut).toISOString(),
         seatClass: roomType,
       });
-      navigate('/payment', { state: {
+      const bookingData = {
         bookingId: data.booking._id,
         amount: data.totalAmount,
-        description: `${hotel.name} - ${selectedRoomNos.length} room(s)`
-      }});
+        type: 'hotel',
+        seats: selectedRoomNos,
+        roomType,
+      };
+      localStorage.setItem('pendingBooking', JSON.stringify(bookingData));
+      navigate('/payment', { state: { bookingData } });
     } catch (e) {
       setError(e.response?.data?.message || 'Booking failed');
       setBooking(null);
