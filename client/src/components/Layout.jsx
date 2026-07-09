@@ -160,6 +160,7 @@ export default function Layout({ children }) {
               </svg>
             </button>
           </div>
+          </div>
         </div>
 
         {/* Mobile menu */}
