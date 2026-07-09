@@ -55,18 +55,21 @@ export default function Layout({ children }) {
     <div className="min-h-screen flex flex-col">
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/60 shadow-soft">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16 md:h-18">
-            <Link to="/" className="flex items-center gap-3 group" onClick={() => setMobileOpen(false)}>
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-extrabold text-lg shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-200">
-                B
-              </div>
-              <span className="text-xl font-bold text-slate-900 group-hover:text-primary-600 transition-colors">
-                BookTrip
-              </span>
-            </Link>
+          <div className="flex items-center h-16 md:h-18">
+            {/* Left: Logo */}
+            <div className="flex-1 flex justify-start">
+              <Link to="/" className="flex items-center gap-3 group" onClick={() => setMobileOpen(false)}>
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-extrabold text-lg shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-200">
+                  B
+                </div>
+                <span className="text-xl font-bold text-slate-900 group-hover:text-primary-600 transition-colors">
+                  BookTrip
+                </span>
+              </Link>
+            </div>
 
-            {/* Desktop nav */}
-            <nav className="hidden md:flex items-center gap-1">
+            {/* Center: Desktop nav links */}
+            <nav className="hidden md:flex items-center justify-center flex-1 gap-1">
               {NAV_LINKS.map(({ to, label }) => (
                 <Link
                   key={to}
@@ -80,41 +83,45 @@ export default function Layout({ children }) {
                   {label}
                 </Link>
               ))}
+            </nav>
 
-              <div className="w-px h-6 bg-slate-200 mx-2" />
+            {/* Right: User menu + mobile button */}
+            <div className="flex-1 flex justify-end items-center gap-1">
+              <div className="hidden md:flex items-center gap-1">
+                <div className="w-px h-6 bg-slate-200 mx-2" />
 
-              {adminToken && !user ? (
-                <div className="relative" ref={dropdownRef}>
-                  <button onClick={() => setDropdownOpen(!dropdownOpen)} className="flex items-center gap-2 pl-2 py-1 rounded-xl hover:bg-slate-50 transition-all">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
-                      {adminName?.charAt(0)?.toUpperCase() || 'A'}
-                    </div>
-                    <span className="text-sm font-medium text-slate-700 max-w-[100px] truncate">{adminName || 'Admin'}</span>
-                    <svg className={`w-4 h-4 text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                  </button>
-                  {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 animate-fade-in">
-                      <div className="px-4 py-2 border-b border-slate-100">
-                        <p className="text-sm font-semibold text-slate-800">{adminName || 'Admin'}</p>
-                        <p className="text-xs text-slate-400">{localStorage.getItem('adminEmail')}</p>
+                {adminToken && !user ? (
+                  <div className="relative" ref={dropdownRef}>
+                    <button onClick={() => setDropdownOpen(!dropdownOpen)} className="flex items-center gap-2 pl-2 py-1 rounded-xl hover:bg-slate-50 transition-all">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                        {adminName?.charAt(0)?.toUpperCase() || 'A'}
                       </div>
-                      <Link to="/admin/dashboard" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-primary-50 hover:text-primary-700 transition-colors">📊 Dashboard</Link>
-                      <Link to="/" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-primary-50 hover:text-primary-700 transition-colors">🏠 Back to Site</Link>
-                      <div className="border-t border-slate-100 mt-1 pt-1">
-                        <button onClick={handleAdminLogout} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">🚪 Logout</button>
+                      <span className="text-sm font-medium text-slate-700 max-w-[100px] truncate">{adminName || 'Admin'}</span>
+                      <svg className={`w-4 h-4 text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+                    {dropdownOpen && (
+                      <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 animate-fade-in">
+                        <div className="px-4 py-2 border-b border-slate-100">
+                          <p className="text-sm font-semibold text-slate-800">{adminName || 'Admin'}</p>
+                          <p className="text-xs text-slate-400">{localStorage.getItem('adminEmail')}</p>
+                        </div>
+                        <Link to="/admin/dashboard" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-primary-50 hover:text-primary-700 transition-colors">📊 Dashboard</Link>
+                        <Link to="/" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-primary-50 hover:text-primary-700 transition-colors">🏠 Back to Site</Link>
+                        <div className="border-t border-slate-100 mt-1 pt-1">
+                          <button onClick={handleAdminLogout} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">🚪 Logout</button>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              ) : user ? (
-                <div className="relative" ref={dropdownRef}>
-                  <button onClick={() => setDropdownOpen(!dropdownOpen)} className="flex items-center gap-2 pl-2 py-1 rounded-xl hover:bg-slate-50 transition-all">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
-                      {user.name?.charAt(0)?.toUpperCase() || 'U'}
-                    </div>
-                    <span className="text-sm font-medium text-slate-700 max-w-[100px] truncate">{user.name}</span>
-                    <svg className={`w-4 h-4 text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                  </button>
+                    )}
+                  </div>
+                ) : user ? (
+                  <div className="relative" ref={dropdownRef}>
+                    <button onClick={() => setDropdownOpen(!dropdownOpen)} className="flex items-center gap-2 pl-2 py-1 rounded-xl hover:bg-slate-50 transition-all">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                        {user.name?.charAt(0)?.toUpperCase() || 'U'}
+                      </div>
+                      <span className="text-sm font-medium text-slate-700 max-w-[100px] truncate">{user.name}</span>
+                      <svg className={`w-4 h-4 text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
                   {dropdownOpen && (
                     <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 animate-fade-in">
                       <div className="px-4 py-2 border-b border-slate-100">
@@ -135,7 +142,7 @@ export default function Layout({ children }) {
                   Sign In
                 </Link>
               )}
-            </nav>
+            </div>
 
             {/* Mobile menu button */}
             <button

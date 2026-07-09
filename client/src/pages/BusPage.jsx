@@ -113,9 +113,9 @@ export default function BusPage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
         {loading ? (
-          <div className="space-y-4" role="status" aria-label="Loading buses">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="status" aria-label="Loading buses">
             <SkeletonCard delay={0} />
             <SkeletonCard delay={100} />
             <SkeletonCard delay={200} />
@@ -136,8 +136,8 @@ export default function BusPage() {
             </div>
           </div>
         ) : (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between mb-2 animate-fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="col-span-full flex items-center justify-between mb-2 animate-fade-in">
               <p className="text-slate-500 text-sm">
                 <span className="font-semibold text-slate-800">{buses.length}</span> bus{buses.length !== 1 ? 'es' : ''} found
               </p>
