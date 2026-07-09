@@ -24,15 +24,11 @@ const bookingSchema = new mongoose.Schema({
   children: { type: Number },
   totalAmount: { type: Number, required: true },
   status: { type: String, enum: ['pending', 'paid', 'cancelled'], default: 'pending' },
-  // Stripe payment fields
-  stripeSessionId: String,
-  stripePaymentId: String,
-  stripeCustomerId: String,
-  paidAt: { type: Date },
-  // Legacy Razorpay fields for backward compatibility
+  // Razorpay payment fields
   razorpayOrderId: String,
   razorpayPaymentId: String,
   razorpaySignature: String,
+  paidAt: { type: Date },
 }, { timestamps: true });
 
 export default mongoose.model('Booking', bookingSchema);

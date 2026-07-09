@@ -35,7 +35,7 @@ const DESTINATIONS = [
 
 const WHY_CHOOSE_US = [
   { title: 'Easy Booking', desc: 'Book trains, buses and flights in one place with a few clicks.', icon: '⚡', color: 'from-primary-500 to-teal-600' },
-  { title: 'Secure Payment', desc: 'Pay with Stripe — safe, instant, and hassle-free.', icon: '🔒', color: 'from-amber-500 to-orange-500' },
+  { title: 'Secure Payment', desc: 'Pay with Razorpay — safe, instant, and hassle-free.', icon: '🔒', color: 'from-amber-500 to-orange-500' },
   { title: 'Fast Refund', desc: 'Get quick refunds when you cancel your bookings.', icon: '💰', color: 'from-emerald-500 to-green-600' },
   { title: '24/7 Support', desc: 'Our customer support team is always here to help.', icon: '🎧', color: 'from-blue-500 to-indigo-600' },
   { title: 'Trusted Platform', desc: 'Over 1 million happy customers trust us.', icon: '⭐', color: 'from-purple-500 to-pink-600' },

@@ -1,46 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../api/axios';
-
-const PAYMENT_METHODS = [
-  {
-    id: 'card',
-    name: 'Credit/Debit Card',
-    icon: '💳',
-    description: 'Visa, Mastercard, Rupay, Amex',
-    popular: true
-  },
-  {
-    id: 'upi',
-    name: 'UPI Payment',
-    icon: '📱',
-    description: 'Google Pay, PhonePe, Paytm UPI'
-  },
-  {
-    id: 'netbanking',
-    name: 'Net Banking',
-    icon: '🏦',
-    description: 'All major banks supported'
-  },
-  {
-    id: 'wallet',
-    name: 'Mobile Wallet',
-    icon: '👛',
-    description: 'Paytm, PhonePe, Amazon Pay'
-  },
-  {
-    id: 'cod',
-    name: 'Cash on Delivery',
-    icon: '💵',
-    description: 'Pay when you receive tickets'
-  },
-  {
-    id: 'emi',
-    name: 'EMI Option',
-    icon: '📊',
-    description: 'Pay in easy installments'
-  }
-];
+import { processPayment } from '../utils/razorpay';
 
 export default function PaymentPage() {
   const navigate = useNavigate();
@@ -72,28 +33,22 @@ export default function PaymentPage() {
     
     setLoading(true);
     try {
-      console.log('Processing payment with method:', selectedMethod);
-
-      // Mock payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Verify payment and mark booking as paid
-      const verifyResponse = await api.post('/payment/verify', { 
-        sessionId: bookingData.sessionId 
-      });
-
-      console.log('Payment successful:', verifyResponse.data);
-      
-      // Clear pending booking
-      localStorage.removeItem('pendingBooking');
-      
-      // Navigate to success page
-      navigate('/payment-success', { 
-        state: { 
-          bookingId: bookingData.bookingId,
-          amount: bookingData.amount,
-          method: selectedMethod
-        } 
+      await processPayment({
+        bookingId: bookingData.bookingId,
+        amount: bookingData.amount,
+        onSuccess: (booking) => {
+          localStorage.removeItem('pendingBooking');
+          navigate('/payment-success', { 
+            state: { 
+              bookingId: bookingData.bookingId,
+              amount: bookingData.amount,
+              method: selectedMethod
+            } 
+          });
+        },
+        onError: (msg) => {
+          alert(msg || 'Payment failed. Please try again.');
+        }
       });
     } catch (error) {
       console.error('Payment error:', error);

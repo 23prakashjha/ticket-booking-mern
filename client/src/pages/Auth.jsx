@@ -71,7 +71,7 @@ export default function Auth() {
           <div className="flex flex-col gap-4 text-left">
             {[
               { icon: '🚂', text: 'Book trains, buses & flights' },
-              { icon: '💳', text: 'Secure payments with Stripe' },
+              { icon: '💳', text: 'Secure payments with Razorpay' },
               { icon: '🎫', text: 'Real-time seat selection' },
               { icon: '⭐', text: 'Exclusive member deals' },
             ].map(({ icon, text }) => (
