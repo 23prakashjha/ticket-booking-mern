@@ -45,6 +45,7 @@ export async function processPayment({ bookingId, amount, onSuccess, onError }) 
     rzp.open();
   } catch (error) {
     console.error('Payment processing error:', error);
-    if (onError) onError(error.message);
+    const msg = error.response?.data?.message || error.message || 'Payment failed';
+    if (onError) onError(msg);
   }
 }

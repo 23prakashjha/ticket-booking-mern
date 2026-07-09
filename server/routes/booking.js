@@ -97,7 +97,9 @@ router.post('/lock-seats', protect, async (req, res) => {
         price = defaultPrices[seatClass] || 400;
       }
     } else {
-      price = type === 'flight' ? (seatClass === 'business' ? doc.businessPrice : doc.economyPrice) : doc[priceKey];
+      price = type === 'flight'
+        ? (seatClass === 'business' ? (doc.businessPrice || 5000) : (doc.economyPrice || 3000))
+        : doc[priceKey];
     }
 
     // For existing trains/buses without seat classes, create seats with default class

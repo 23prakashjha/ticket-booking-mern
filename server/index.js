@@ -2,9 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
-// Load environment variables first
-dotenv.config();
+// Load environment variables from server/.env
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 import authRoutes from './routes/auth.js';
 import adminRoutes from './routes/admin.js';

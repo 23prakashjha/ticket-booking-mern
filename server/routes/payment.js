@@ -9,19 +9,33 @@ import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 
+const key_id = process.env.RAZORPAY_KEY_ID;
+const key_secret = process.env.RAZORPAY_KEY_SECRET;
+
+if (!key_id || !key_secret) {
+  console.error('RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET is not set. Payment orders will fail.');
+}
+
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_xxxxxxxxxx',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || 'xxxxxxxxxxxxxx',
+  key_id: key_id || 'rzp_test_xxxxxxxxxx',
+  key_secret: key_secret || 'xxxxxxxxxxxxxx',
 });
 
 router.post('/create-order', protect, async (req, res) => {
   try {
     const { bookingId } = req.body;
+    if (!bookingId) return res.status(400).json({ message: 'bookingId is required' });
+
     const booking = await Booking.findOne({ _id: bookingId, user: req.user._id, status: 'pending' });
     if (!booking) return res.status(404).json({ message: 'Booking not found' });
 
+    const amount = Math.round(booking.totalAmount * 100);
+    if (!amount || amount < 100) {
+      return res.status(400).json({ message: 'Invalid booking amount' });
+    }
+
     const options = {
-      amount: Math.round(booking.totalAmount * 100),
+      amount,
       currency: 'INR',
       receipt: `booking_${bookingId}`,
       payment_capture: 1,
@@ -35,11 +49,14 @@ router.post('/create-order', protect, async (req, res) => {
       orderId: order.id,
       amount: order.amount,
       currency: order.currency,
-      key: process.env.RAZORPAY_KEY_ID || 'rzp_test_xxxxxxxxxx',
+      key: key_id,
     });
   } catch (error) {
-    console.error('Razorpay order creation error:', error);
-    res.status(500).json({ message: error.message });
+    console.error('Razorpay order creation error:', error?.message || error);
+    if (error?.response?.data) {
+      console.error('Razorpay API response:', JSON.stringify(error.response.data));
+    }
+    res.status(500).json({ message: error?.message || 'Payment order creation failed' });
   }
 });
 
@@ -53,7 +70,7 @@ router.post('/verify', protect, async (req, res) => {
     }
 
     const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || 'xxxxxxxxxxxxxx')
+      .createHmac('sha256', key_secret || 'xxxxxxxxxxxxxx')
       .update(`${orderId}|${paymentId}`)
       .digest('hex');
 
