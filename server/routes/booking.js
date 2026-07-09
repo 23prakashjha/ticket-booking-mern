@@ -103,7 +103,7 @@ router.post('/lock-seats', protect, async (req, res) => {
     }
 
     // For existing trains/buses without seat classes, create seats with default class
-    if (doc.seats.length > 0 && !doc.seats[0].class) {
+    if (doc.seats && doc.seats.length > 0 && !doc.seats[0].class) {
       if (type === 'train') {
         // Assign classes to existing seats (distribute evenly)
         const seatClasses = ['1st_ac', '2nd_ac', '3rd_ac', 'sleeper'];
@@ -123,19 +123,21 @@ router.post('/lock-seats', protect, async (req, res) => {
     if (type === 'place') {
       // No seat locking needed for places
     } else if (type === 'hotel') {
+      if (!seats || !seats.length) return res.status(400).json({ message: 'No rooms selected' });
       for (const roomNo of seats) {
-        const room = doc.rooms.find(r => r.roomNo === roomNo);
+        const room = doc.rooms && doc.rooms.find(r => r.roomNo === roomNo);
         if (!room || room.status !== 'available') return res.status(400).json({ message: `Room ${roomNo} not available` });
         if (room.type !== roomType) return res.status(400).json({ message: `Room ${roomNo} type mismatch` });
       }
       for (const roomNo of seats) {
-        const room = doc.rooms.find(r => r.roomNo === roomNo);
+        const room = doc.rooms && doc.rooms.find(r => r.roomNo === roomNo);
         room.status = 'locked';
         room.lockedAt = new Date();
       }
     } else {
+      if (!seats || !seats.length) return res.status(400).json({ message: 'No seats selected' });
       for (const seatNo of seats) {
-        const seat = doc.seats.find(s => s.seatNo === seatNo);
+        const seat = doc.seats && doc.seats.find(s => s.seatNo === seatNo);
         if (!seat || seat.status !== 'available') return res.status(400).json({ message: `Seat ${seatNo} not available` });
         if (type !== 'flight' && seat.class && seat.class !== seatClass) {
           return res.status(400).json({ message: `Seat ${seatNo} class mismatch` });
@@ -145,7 +147,7 @@ router.post('/lock-seats', protect, async (req, res) => {
         }
       }
       for (const seatNo of seats) {
-        const seat = doc.seats.find(s => s.seatNo === seatNo);
+        const seat = doc.seats && doc.seats.find(s => s.seatNo === seatNo);
         seat.status = 'locked';
         seat.lockedAt = new Date();
       }
@@ -156,7 +158,7 @@ router.post('/lock-seats', protect, async (req, res) => {
     if (type === 'place') {
       totalAmount = (doc.entryFee || 100) * (Number(adults) || 1) + (doc.childFee || 50) * (Number(children) || 0);
     } else {
-      totalAmount = type === 'hotel' ? price * seats.length * (guests || 1) : price * seats.length;
+      totalAmount = type === 'hotel' ? price * (seats ? seats.length : 0) * (guests || 1) : price * (seats ? seats.length : 0);
     }
 
     const bookingData = {
